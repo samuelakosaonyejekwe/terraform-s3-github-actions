@@ -12,7 +12,7 @@ terraform {
     # REMOTE STATE S3 BUCKET
     # ------------------------------------------------------
 
-    bucket = "samuel-terraform-state-bucket-name"
+    bucket = "samuelakosaonyejekwe-terraform-state-bucket-name"
 
     # ------------------------------------------------------
     # TERRAFORM STATE FILE PATH

@@ -21,6 +21,19 @@ on:
 
   workflow_dispatch:
 
+    inputs:
+
+      action:
+        description: "Choose Terraform action"
+        required: true
+        default: apply
+
+        type: choice
+
+        options:
+          - apply
+          - destroy
+
 # ----------------------------------------------------------
 # ENVIRONMENT VARIABLES
 # ----------------------------------------------------------
@@ -112,6 +125,15 @@ jobs:
       # ----------------------------------------------------
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: github.event.inputs.action == 'apply' || github.event.inputs.action == ''
         working-directory: terraform
         run: terraform apply -auto-approve tfplan
+
+      # ----------------------------------------------------
+      # TERRAFORM DESTROY
+      # ----------------------------------------------------
+
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        working-directory: terraform
+        run: terraform destroy -auto-approve

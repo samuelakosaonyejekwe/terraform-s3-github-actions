@@ -12,9 +12,9 @@ variable "aws_region" {
 
   description = "AWS region where resources will be deployed"
 
-  type        = string
+  type = string
 
-  default     = "eu-west-2"
+  default = "eu-west-2"
 }
 
 # ----------------------------------------------------------
@@ -25,9 +25,9 @@ variable "project_name" {
 
   description = "Project name used for resource naming"
 
-  type        = string
+  type = string
 
-  default     = "github-actions-s3"
+  default = "github-actions-s3"
 }
 
 # ----------------------------------------------------------
@@ -38,9 +38,9 @@ variable "environment" {
 
   description = "Deployment environment"
 
-  type        = string
+  type = string
 
-  default     = "dev"
+  default = "dev"
 }
 
 # ----------------------------------------------------------
@@ -51,7 +51,7 @@ variable "common_tags" {
 
   description = "Common tags applied to all resources"
 
-  type        = map(string)
+  type = map(string)
 
   default = {
     Owner       = "Samuel"

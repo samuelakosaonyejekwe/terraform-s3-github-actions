@@ -1,0 +1,112 @@
+# ==========================================================
+# FILE: .github/workflows/terraform.yml
+# PURPOSE: GitHub Actions CI/CD for Terraform S3 Deployment
+# ==========================================================
+
+name: Terraform CI/CD Pipeline
+
+# ----------------------------------------------------------
+# TRIGGERS
+# ----------------------------------------------------------
+
+on:
+
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+# ----------------------------------------------------------
+# ENVIRONMENT VARIABLES
+# ----------------------------------------------------------
+
+env:
+  AWS_REGION: eu-west-2
+  TF_VERSION: 1.8.5
+
+# ----------------------------------------------------------
+# JOBS
+# ----------------------------------------------------------
+
+jobs:
+
+  terraform:
+
+    name: Terraform Deployment
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+
+      # ----------------------------------------------------
+      # CHECKOUT REPOSITORY
+      # ----------------------------------------------------
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ----------------------------------------------------
+      # SETUP TERRAFORM
+      # ----------------------------------------------------
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      # ----------------------------------------------------
+      # CONFIGURE AWS CREDENTIALS
+      # ----------------------------------------------------
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ----------------------------------------------------
+      # TERRAFORM INIT
+      # ----------------------------------------------------
+
+      - name: Terraform Init
+        run: terraform init
+
+      # ----------------------------------------------------
+      # TERRAFORM FORMAT CHECK
+      # ----------------------------------------------------
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      # ----------------------------------------------------
+      # TERRAFORM VALIDATE
+      # ----------------------------------------------------
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # ----------------------------------------------------
+      # TERRAFORM PLAN
+      # ----------------------------------------------------
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      # ----------------------------------------------------
+      # TERRAFORM APPLY
+      # ----------------------------------------------------
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve tfplan

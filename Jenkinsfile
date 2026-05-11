@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                credentialsId: 'github-private-key',
+                credentialsId: 'my-jenkins-private-key',
                 url: 'git@github.com:samuelakosaonyejekwe/terraform-s3-github-actions.git'
             }
         }
@@ -24,7 +24,12 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir('terraform') {
-                    sh 'terraform init'
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'aws-jenkins-creds'
+                    ]]) {
+                        sh 'terraform init'
+                    }
                 }
             }
         }
@@ -40,7 +45,12 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 dir('terraform') {
-                    sh 'terraform plan'
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'aws-jenkins-creds'
+                    ]]) {
+                        sh 'terraform plan'
+                    }
                 }
             }
         }
@@ -48,7 +58,12 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('terraform') {
-                    sh 'terraform apply -auto-approve'
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'aws-jenkins-creds'
+                    ]]) {
+                        sh 'terraform apply -auto-approve'
+                    }
                 }
             }
         }

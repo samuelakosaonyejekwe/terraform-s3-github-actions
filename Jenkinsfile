@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                credentialsId: 'my-jenkins-private-key',
+                credentialsId: 'cicd-github-private-key',
                 url: 'git@github.com:samuelakosaonyejekwe/terraform-s3-github-actions.git'
             }
         }
